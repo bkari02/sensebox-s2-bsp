@@ -16,7 +16,7 @@
           "category": "ESP32",
           "url": "https://github.com/bkari02/sensebox-s2-bsp/raw/main/1.0.0.zip",
           "archiveFileName": "sensebox_mcu_s2-1.0.0.zip",
-          "checksum": "md5sum:d14d7edbf4ad44e5774f77bcb9a6352d",
+          "checksum": "SH-256:f67b01c26825ac260615529de98f07372b96f3c24fd7671af878558af979a3a3",
           "size": "27996956",
           "help": {
             "online": ""
