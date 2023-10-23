@@ -10,7 +10,7 @@
       },
       "platforms": [
         {
-          "name": "sensebox_mcu_s2",
+          "name": "senseBox MCU s2",
           "architecture": "esp32",
           "version": "1.0.0",
           "category": "ESP32",
