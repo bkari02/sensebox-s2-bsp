@@ -12,12 +12,12 @@
         {
           "name": "senseBox MCU s2",
           "architecture": "esp32",
-          "version": "1.0.0",
+          "version": "2.0.0",
           "category": "ESP32",
-          "url": "https://github.com/bkari02/sensebox-s2-bsp/raw/main/1.0.0.zip",
-          "archiveFileName": "sensebox_mcu_s2-1.0.0.zip",
-          "checksum": "SHA-256:f67b01c26825ac260615529de98f07372b96f3c24fd7671af878558af979a3a3",
-          "size": "27996956",
+          "url": "https://github.com/bkari02/sensebox-s2-bsp/raw/main/2.0.0.zip",
+          "archiveFileName": "sensebox_mcu_s2-2.0.0.zip",
+          "checksum": "SHA-256:91efd8dd8f14679309ed9e3039572883c7ed10d3b644de58cb243675fafbb5b1",
+          "size": "27997224",
           "help": {
             "online": ""
           },
@@ -90,6 +90,90 @@
               "packager": "esp32",
               "name": "mklittlefs",
               "version": "3.0.0-gnu12-dc7f933"
+            }
+          ]
+        },
+        {
+          "name": "senseBox MCU s2",
+          "architecture": "esp32",
+          "version": "1.0.0",
+          "category": "ESP32",
+          "url": "https://github.com/bkari02/sensebox-s2-bsp/raw/main/1.0.0.zip",
+          "archiveFileName": "sensebox_mcu_s2-1.0.0.zip",
+          "checksum": "SHA-256:2d6613b35730d4d1d0042c35aea4a6f3875583c9eb117635e310a0a4e3fbeece",
+          "size": "252899047",
+          "help": {
+            "online": ""
+          },
+          "boards": [
+            {
+              "name": "ESP32-S2 Dev Board"
+            },
+            {
+              "name": "ESP32-S3 Dev Board"
+            },
+            {
+              "name": "senseBox MCU S2"
+            },
+            {
+              "name": "UM Feather S2"
+            }
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "esp32",
+              "name": "xtensa-esp32-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "esp32",
+              "name": "xtensa-esp32s2-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "esp32",
+              "name": "xtensa-esp32s3-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "esp32",
+              "name": "xtensa-esp-elf-gdb",
+              "version": "11.2_20220823"
+            },
+            {
+              "packager": "esp32",
+              "name": "riscv32-esp-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "esp32",
+              "name": "riscv32-esp-elf-gdb",
+              "version": "11.2_20220823"
+            },
+            {
+              "packager": "esp32",
+              "name": "openocd-esp32",
+              "version": "v0.11.0-esp32-20221026"
+            },
+            {
+              "packager": "esp32",
+              "name": "esptool_py",
+              "version": "4.5.1"
+            },
+            {
+              "packager": "esp32",
+              "name": "mkspiffs",
+              "version": "0.2.3"
+            },
+            {
+              "packager": "esp32",
+              "name": "mklittlefs",
+              "version": "3.0.0-gnu12-dc7f933"
+            },
+            {
+              "packager": "arduino",
+              "name": "dfu-util",
+              "version": "0.11.0-arduino5"
             }
           ]
         }

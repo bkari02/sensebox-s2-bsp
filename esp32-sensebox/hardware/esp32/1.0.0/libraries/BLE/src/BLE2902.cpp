@@ -9,9 +9,6 @@
  * See also:
  * https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.descriptor.gatt.client_characteristic_configuration.xml
  */
-#include "soc/soc_caps.h"
-#if SOC_BLE_SUPPORTED
-
 #include "sdkconfig.h"
 #if defined(CONFIG_BLUEDROID_ENABLED)
 
@@ -65,4 +62,3 @@ void BLE2902::setNotifications(bool flag) {
 } // setNotifications
 
 #endif
-#endif /* SOC_BLE_SUPPORTED */

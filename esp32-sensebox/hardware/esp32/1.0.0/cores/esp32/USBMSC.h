@@ -13,10 +13,6 @@
 // limitations under the License.
 
 #pragma once
-
-#include "soc/soc_caps.h"
-#if SOC_USB_OTG_SUPPORTED
-
 #include <stdint.h>
 #include <stdbool.h>
 #include "sdkconfig.h"
@@ -53,4 +49,3 @@ private:
 };
 
 #endif /* CONFIG_TINYUSB_MSC_ENABLED */
-#endif /* SOC_USB_OTG_SUPPORTED */

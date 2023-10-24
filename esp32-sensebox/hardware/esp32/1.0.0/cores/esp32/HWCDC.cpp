@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #include "USB.h"
-#if SOC_USB_SERIAL_JTAG_SUPPORTED
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3
 
 #include "esp32-hal.h"
-#include "esp32-hal-periman.h"
 #include "HWCDC.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
@@ -23,20 +22,16 @@
 #include "freertos/ringbuf.h"
 #include "esp_intr_alloc.h"
 #include "soc/periph_defs.h"
-#include "soc/io_mux_reg.h"
-#pragma GCC diagnostic ignored "-Wvolatile"
 #include "hal/usb_serial_jtag_ll.h"
-#pragma GCC diagnostic warning "-Wvolatile"
-#include "rom/ets_sys.h"
 
 ESP_EVENT_DEFINE_BASE(ARDUINO_HW_CDC_EVENTS);
 
 static RingbufHandle_t tx_ring_buf = NULL;
-static QueueHandle_t rx_queue = NULL;
+static xQueueHandle rx_queue = NULL;
 static uint8_t rx_data_buf[64] = {0};
 static intr_handle_t intr_handle = NULL;
 static volatile bool initial_empty = false;
-static SemaphoreHandle_t tx_lock = NULL;
+static xSemaphoreHandle tx_lock = NULL;
 
 // workaround for when USB CDC is not connected
 static uint32_t tx_timeout_ms = 0;
@@ -173,45 +168,14 @@ void HWCDC::onEvent(arduino_hw_cdc_event_t event, esp_event_handler_t callback){
     arduino_hw_cdc_event_handler_register_with(ARDUINO_HW_CDC_EVENTS, event, callback, this);
 }
 
-bool HWCDC::deinit(void * busptr) 
-{
-    // avoid any recursion issue with Peripheral Manager perimanSetPinBus() call
-    static bool running = false;
-    if (running) return true;
-    running = true; 
-    // Setting USB D+ D- pins
-    bool retCode = true;
-    retCode &= perimanSetPinBus(USB_DM_GPIO_NUM, ESP32_BUS_TYPE_INIT, NULL);
-    retCode &= perimanSetPinBus(USB_DP_GPIO_NUM, ESP32_BUS_TYPE_INIT, NULL);
-    if (retCode) {
-        // Force the host to re-enumerate (BUS_RESET)
-        pinMode(USB_DM_GPIO_NUM, OUTPUT_OPEN_DRAIN);
-        pinMode(USB_DP_GPIO_NUM, OUTPUT_OPEN_DRAIN);
-        digitalWrite(USB_DM_GPIO_NUM, LOW);
-        digitalWrite(USB_DP_GPIO_NUM, LOW);
-    }
-    // release the flag
-    running = false;
-    return retCode;
-}
-
 void HWCDC::begin(unsigned long baud)
 {
     if(tx_lock == NULL) {
         tx_lock = xSemaphoreCreateMutex();
     }
-    //RX Buffer default has 256 bytes if not preset
-    if(rx_queue == NULL) {
-        if (!setRxBufferSize(256)) {
-            log_e("HW CDC RX Buffer error");
-        }
-    }
-    //TX Buffer default has 256 bytes if not preset
-    if (tx_ring_buf == NULL) {
-        if (!setTxBufferSize(256)) {
-            log_e("HW CDC TX Buffer error");
-        }    
-    }
+    setRxBufferSize(256);//default if not preset
+    setTxBufferSize(256);//default if not preset
+
     usb_serial_jtag_ll_disable_intr_mask(USB_SERIAL_JTAG_LL_INTR_MASK);
     usb_serial_jtag_ll_clr_intsts_mask(USB_SERIAL_JTAG_LL_INTR_MASK);
     usb_serial_jtag_ll_ena_intr_mask(USB_SERIAL_JTAG_INTR_SERIAL_IN_EMPTY | USB_SERIAL_JTAG_INTR_SERIAL_OUT_RECV_PKT | USB_SERIAL_JTAG_INTR_BUS_RESET);
@@ -220,14 +184,6 @@ void HWCDC::begin(unsigned long baud)
         end();
         return;
     }
-    if (perimanSetBusDeinit(ESP32_BUS_TYPE_USB, HWCDC::deinit)) {
-        // Setting USB D+ D- pins
-        perimanSetPinBus(USB_DM_GPIO_NUM, ESP32_BUS_TYPE_USB, (void *) this);
-        perimanSetPinBus(USB_DP_GPIO_NUM, ESP32_BUS_TYPE_USB, (void *) this);
-    } else {
-        log_e("Serial JTAG Pins can't be set into Peripheral Manager.");
-    }
-
     usb_serial_jtag_ll_txfifo_flush();
 }
 
@@ -247,7 +203,6 @@ void HWCDC::end()
         esp_event_loop_delete(arduino_hw_cdc_event_loop_handle);
         arduino_hw_cdc_event_loop_handle = NULL;
     }
-    HWCDC::deinit(this);
 }
 
 void HWCDC::setTxTimeoutMs(uint32_t timeout){
@@ -444,4 +399,4 @@ HWCDC USBSerial;
 #endif
 #endif
 
-#endif /* SOC_USB_SERIAL_JTAG_SUPPORTED */
+#endif /* CONFIG_TINYUSB_CDC_ENABLED */

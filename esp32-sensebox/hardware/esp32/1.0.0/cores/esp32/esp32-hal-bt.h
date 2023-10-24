@@ -15,9 +15,6 @@
 #ifndef _ESP32_ESP32_HAL_BT_H_
 #define _ESP32_ESP32_HAL_BT_H_
 
-#include "soc/soc_caps.h"
-#if SOC_BT_SUPPORTED
-
 #include "esp32-hal.h"
 
 #ifdef __cplusplus
@@ -31,7 +28,5 @@ bool btStop();
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* SOC_BT_SUPPORTED */
 
 #endif /* _ESP32_ESP32_HAL_BT_H_ */

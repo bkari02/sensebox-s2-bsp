@@ -19,7 +19,6 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "USBHID.h"
-#if SOC_USB_OTG_SUPPORTED
 
 #if CONFIG_TINYUSB_HID_ENABLED
 
@@ -37,7 +36,6 @@ USBHIDKeyboard::USBHIDKeyboard(): hid(){
     static bool initialized = false;
     if(!initialized){
         initialized = true;
-        memset(&_keyReport, 0, sizeof(KeyReport));
         hid.addDevice(this, sizeof(report_descriptor));
     }
 }
@@ -74,7 +72,11 @@ void USBHIDKeyboard::sendReport(KeyReport* keys)
     hid_keyboard_report_t report;
     report.reserved = 0;
     report.modifier = keys->modifiers;
-    memcpy(report.keycode, keys->keys, 6);
+    if (keys->keys) {
+        memcpy(report.keycode, keys->keys, 6);
+    } else {
+        memset(report.keycode, 0, 6);
+    }
     hid.SendReport(HID_REPORT_ID_KEYBOARD, &report, sizeof(report));
 }
 
@@ -348,4 +350,3 @@ size_t USBHIDKeyboard::write(const uint8_t *buffer, size_t size) {
 }
 
 #endif /* CONFIG_TINYUSB_HID_ENABLED */
-#endif /* SOC_USB_OTG_SUPPORTED */

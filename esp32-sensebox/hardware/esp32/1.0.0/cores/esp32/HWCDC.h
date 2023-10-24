@@ -14,9 +14,7 @@
 #pragma once
 
 #include "sdkconfig.h"
-#include "soc/soc_caps.h"
-
-#if SOC_USB_SERIAL_JTAG_SUPPORTED
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3
 
 #include <inttypes.h>
 #include "esp_event.h"
@@ -44,9 +42,6 @@ typedef union {
 
 class HWCDC: public Stream
 {
-private:
-    static bool deinit(void * busptr);
-    
 public:
     HWCDC();
     ~HWCDC();

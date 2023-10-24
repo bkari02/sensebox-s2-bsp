@@ -4,9 +4,6 @@
  *  Created on: Jun 22, 2017
  *      Author: kolban
  */
-#include "soc/soc_caps.h"
-#if SOC_BLE_SUPPORTED
-
 #include "sdkconfig.h"
 #if defined(CONFIG_BLUEDROID_ENABLED)
 #include <sstream>
@@ -61,7 +58,7 @@ BLEDescriptor* BLEDescriptorMap::getByHandle(uint16_t handle) {
  * @return N/A.
  */
 void BLEDescriptorMap::setByUUID(const char* uuid, BLEDescriptor* pDescriptor){
-	m_uuidMap.insert(std::pair<BLEDescriptor*, String>(pDescriptor, uuid));
+	m_uuidMap.insert(std::pair<BLEDescriptor*, std::string>(pDescriptor, uuid));
 } // setByUUID
 
 
@@ -73,7 +70,7 @@ void BLEDescriptorMap::setByUUID(const char* uuid, BLEDescriptor* pDescriptor){
  * @return N/A.
  */
 void BLEDescriptorMap::setByUUID(BLEUUID uuid, BLEDescriptor* pDescriptor) {
-	m_uuidMap.insert(std::pair<BLEDescriptor*, String>(pDescriptor, uuid.toString()));
+	m_uuidMap.insert(std::pair<BLEDescriptor*, std::string>(pDescriptor, uuid.toString()));
 } // setByUUID
 
 
@@ -92,8 +89,8 @@ void BLEDescriptorMap::setByHandle(uint16_t handle, BLEDescriptor* pDescriptor) 
  * @brief Return a string representation of the descriptor map.
  * @return A string representation of the descriptor map.
  */
-String BLEDescriptorMap::toString() {
-	String res;
+std::string BLEDescriptorMap::toString() {
+	std::string res;
 	char hex[5];
 	int count = 0;
 	for (auto &myPair : m_uuidMap) {
@@ -148,6 +145,4 @@ BLEDescriptor* BLEDescriptorMap::getNext() {
 	m_iterator++;
 	return pRet;
 } // getNext
-
 #endif /* CONFIG_BLUEDROID_ENABLED */
-#endif /* SOC_BLE_SUPPORTED */

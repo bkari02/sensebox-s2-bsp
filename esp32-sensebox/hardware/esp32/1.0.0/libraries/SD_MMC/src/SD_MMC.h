@@ -36,13 +36,15 @@ class SDMMCFS : public FS
 {
 protected:
     sdmmc_card_t* _card;
+
+#ifdef SOC_SDMMC_USE_GPIO_MATRIX
     int8_t _pin_clk = -1;
     int8_t _pin_cmd = -1;
     int8_t _pin_d0 = -1;
     int8_t _pin_d1 = -1;
     int8_t _pin_d2 = -1;
     int8_t _pin_d3 = -1;
-    bool _mode1bit = false;
+#endif
 
 public:
     SDMMCFS(FSImplPtr impl);
@@ -54,9 +56,6 @@ public:
     uint64_t cardSize();
     uint64_t totalBytes();
     uint64_t usedBytes();
-    
-private:
-    static bool sdmmcDetachBus(void * bus_pointer);
 };
 
 }

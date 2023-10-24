@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #include "USBHID.h"
-#if SOC_USB_OTG_SUPPORTED
 
 #if CONFIG_TINYUSB_HID_ENABLED
 
@@ -56,4 +55,3 @@ size_t USBHIDConsumerControl::release(){
 
 
 #endif /* CONFIG_TINYUSB_HID_ENABLED */
-#endif /* SOC_USB_OTG_SUPPORTED */

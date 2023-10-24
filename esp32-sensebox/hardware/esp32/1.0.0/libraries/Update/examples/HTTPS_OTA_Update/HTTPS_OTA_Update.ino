@@ -62,9 +62,6 @@ void HttpEvent(HttpEvent_t *event)
         case HTTP_EVENT_DISCONNECTED:
             Serial.println("Http Event Disconnected");
             break;
-        case HTTP_EVENT_REDIRECT:
-            Serial.println("Http Event Redirect");
-            break;
     }
 }
 

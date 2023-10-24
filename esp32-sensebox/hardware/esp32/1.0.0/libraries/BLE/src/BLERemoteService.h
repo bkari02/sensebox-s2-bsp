@@ -7,9 +7,6 @@
 
 #ifndef COMPONENTS_CPP_UTILS_BLEREMOTESERVICE_H_
 #define COMPONENTS_CPP_UTILS_BLEREMOTESERVICE_H_
-#include "soc/soc_caps.h"
-#if SOC_BLE_SUPPORTED
-
 #include "sdkconfig.h"
 #if defined(CONFIG_BLUEDROID_ENABLED)
 
@@ -35,16 +32,16 @@ public:
 	BLERemoteCharacteristic* getCharacteristic(const char* uuid);	  // Get the specified characteristic reference.
 	BLERemoteCharacteristic* getCharacteristic(BLEUUID uuid);       // Get the specified characteristic reference.
 	BLERemoteCharacteristic* getCharacteristic(uint16_t uuid);      // Get the specified characteristic reference.
-	std::map<String, BLERemoteCharacteristic*>* getCharacteristics();
+	std::map<std::string, BLERemoteCharacteristic*>* getCharacteristics();
 	std::map<uint16_t, BLERemoteCharacteristic*>* getCharacteristicsByHandle();  // Get the characteristics map.
 	void getCharacteristics(std::map<uint16_t, BLERemoteCharacteristic*>** pCharacteristicMap);
 
 	BLEClient*               getClient(void);                                           // Get a reference to the client associated with this service.
 	uint16_t                 getHandle();                                               // Get the handle of this service.
 	BLEUUID                  getUUID(void);                                             // Get the UUID of this service.
-	String              getValue(BLEUUID characteristicUuid);                      // Get the value of a characteristic.
-	void                     setValue(BLEUUID characteristicUuid, String value);   // Set the value of a characteristic.
-	String              toString(void);
+	std::string              getValue(BLEUUID characteristicUuid);                      // Get the value of a characteristic.
+	void                     setValue(BLEUUID characteristicUuid, std::string value);   // Set the value of a characteristic.
+	std::string              toString(void);
 
 private:
 	// Private constructor ... never meant to be created by a user application.
@@ -70,7 +67,7 @@ private:
 	// Properties
 
 	// We maintain a map of characteristics owned by this service keyed by a string representation of the UUID.
-	std::map<String, BLERemoteCharacteristic*> m_characteristicMap;
+	std::map<std::string, BLERemoteCharacteristic*> m_characteristicMap;
 
 	// We maintain a map of characteristics owned by this service keyed by a handle.
 	std::map<uint16_t, BLERemoteCharacteristic*> m_characteristicMapByHandle;
@@ -85,5 +82,4 @@ private:
 }; // BLERemoteService
 
 #endif /* CONFIG_BLUEDROID_ENABLED */
-#endif /* SOC_BLE_SUPPORTED */
 #endif /* COMPONENTS_CPP_UTILS_BLEREMOTESERVICE_H_ */

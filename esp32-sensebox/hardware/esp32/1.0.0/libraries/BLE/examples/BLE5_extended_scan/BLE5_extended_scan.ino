@@ -7,10 +7,9 @@
 
    author: chegewara
 */
-#ifndef SOC_BLE_50_SUPPORTED
-#warning "This SoC does not support BLE5. Try using ESP32-C3, or ESP32-S3"
+#ifndef CONFIG_BT_BLE_50_FEATURES_SUPPORTED
+#warning "Not compatible hardware"
 #else
-
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEScan.h>
@@ -47,4 +46,4 @@ void loop() {
   // put your main code here, to run repeatedly:
   delay(2000);
 }
-#endif // SOC_BLE_50_SUPPORTED
+#endif // CONFIG_BT_BLE_50_FEATURES_SUPPORTED

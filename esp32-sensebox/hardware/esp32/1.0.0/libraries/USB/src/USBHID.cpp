@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #include "USBHID.h"
-#if SOC_USB_OTG_SUPPORTED
 
 #if CONFIG_TINYUSB_HID_ENABLED
 
@@ -36,8 +35,8 @@ static tinyusb_hid_device_t tinyusb_hid_devices[USB_HID_DEVICES_MAX];
 
 static uint8_t tinyusb_hid_devices_num = 0;
 static bool tinyusb_hid_devices_is_initialized = false;
-static SemaphoreHandle_t tinyusb_hid_device_input_sem = NULL;
-static SemaphoreHandle_t tinyusb_hid_device_input_mutex = NULL;
+static xSemaphoreHandle tinyusb_hid_device_input_sem = NULL;
+static xSemaphoreHandle tinyusb_hid_device_input_mutex = NULL;
 
 static bool tinyusb_hid_is_initialized = false;
 static uint8_t tinyusb_loaded_hid_devices_num = 0;
@@ -385,4 +384,3 @@ void USBHID::onEvent(arduino_usb_hid_event_t event, esp_event_handler_t callback
 }
 
 #endif /* CONFIG_TINYUSB_HID_ENABLED */
-#endif /* SOC_USB_OTG_SUPPORTED */

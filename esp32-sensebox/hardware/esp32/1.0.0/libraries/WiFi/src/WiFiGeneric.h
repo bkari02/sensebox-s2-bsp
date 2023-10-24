@@ -29,8 +29,6 @@
 #include "WiFiType.h"
 #include "IPAddress.h"
 #include "esp_smartconfig.h"
-#include "esp_netif_types.h"
-#include "esp_eth_driver.h"
 #include "wifi_provisioning/manager.h"
 
 ESP_EVENT_DECLARE_BASE(ARDUINO_EVENTS);
@@ -59,7 +57,6 @@ typedef enum {
 	ARDUINO_EVENT_ETH_CONNECTED,
 	ARDUINO_EVENT_ETH_DISCONNECTED,
 	ARDUINO_EVENT_ETH_GOT_IP,
-	ARDUINO_EVENT_ETH_LOST_IP,
 	ARDUINO_EVENT_ETH_GOT_IP6,
 	ARDUINO_EVENT_WPS_ER_SUCCESS,
 	ARDUINO_EVENT_WPS_ER_FAILED,

@@ -4,9 +4,6 @@
  *  Created on: Jul 17, 2017
  *      Author: kolban
  */
-#include "soc/soc_caps.h"
-#if SOC_BLE_SUPPORTED
-
 #include "sdkconfig.h"
 #if defined(CONFIG_BLUEDROID_ENABLED)
 #include "BLEValue.h"
@@ -24,7 +21,7 @@ BLEValue::BLEValue() {
  * The accumulation is a growing set of data that is added to until a commit or cancel.
  * @param [in] part A message part being added.
  */
-void BLEValue::addPart(String part) {
+void BLEValue::addPart(std::string part) {
 	log_v(">> addPart: length=%d", part.length());
 	m_accumulation += part;
 } // addPart
@@ -38,7 +35,7 @@ void BLEValue::addPart(String part) {
  */
 void BLEValue::addPart(uint8_t* pData, size_t length) {
 	log_v(">> addPart: length=%d", length);
-	m_accumulation += String((char*) pData, length);
+	m_accumulation += std::string((char*) pData, length);
 } // addPart
 
 
@@ -73,7 +70,7 @@ void BLEValue::commit() {
  * @return A pointer to the data.
  */
 uint8_t* BLEValue::getData() {
-	return (uint8_t*) m_value.c_str();
+	return (uint8_t*) m_value.data();
 }
 
 
@@ -98,7 +95,7 @@ uint16_t BLEValue::getReadOffset() {
 /**
  * @brief Get the current value.
  */
-String BLEValue::getValue() {
+std::string BLEValue::getValue() {
 	return m_value;
 } // getValue
 
@@ -115,7 +112,7 @@ void BLEValue::setReadOffset(uint16_t readOffset) {
 /**
  * @brief Set the current value.
  */
-void BLEValue::setValue(String value) {
+void BLEValue::setValue(std::string value) {
 	m_value = value;
 } // setValue
 
@@ -126,9 +123,8 @@ void BLEValue::setValue(String value) {
  * @param [in] The length of the new current value.
  */
 void BLEValue::setValue(uint8_t* pData, size_t length) {
-	m_value = String((char*) pData, length);
+	m_value = std::string((char*) pData, length);
 } // setValue
 
 
-#endif /* CONFIG_BLUEDROID_ENABLED */
-#endif /* SOC_BLE_SUPPORTED */
+#endif // CONFIG_BLUEDROID_ENABLED

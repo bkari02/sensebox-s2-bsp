@@ -7,9 +7,6 @@
 
 #ifndef COMPONENTS_CPP_UTILS_BLESERVICE_H_
 #define COMPONENTS_CPP_UTILS_BLESERVICE_H_
-#include "soc/soc_caps.h"
-#if SOC_BLE_SUPPORTED
-
 #include "sdkconfig.h"
 #if defined(CONFIG_BLUEDROID_ENABLED)
 
@@ -35,13 +32,13 @@ public:
 	BLECharacteristic* getByHandle(uint16_t handle);
 	BLECharacteristic* getFirst();
 	BLECharacteristic* getNext();
-	String toString();
+	std::string toString();
 	void handleGATTServerEvent(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param);
 
 private:
-	std::map<BLECharacteristic*, String> m_uuidMap;
+	std::map<BLECharacteristic*, std::string> m_uuidMap;
 	std::map<uint16_t, BLECharacteristic*> m_handleMap;
-	std::map<BLECharacteristic*, String>::iterator m_iterator;
+	std::map<BLECharacteristic*, std::string>::iterator m_iterator;
 };
 
 
@@ -63,7 +60,7 @@ public:
 	BLEServer*         getServer();
 	void               start();
 	void			   stop();
-	String        toString();
+	std::string        toString();
 	uint16_t           getHandle();
 	uint8_t			   m_instId = 0;
 
@@ -96,6 +93,5 @@ private:
 }; // BLEService
 
 
-#endif /* CONFIG_BLUEDROID_ENABLED */
-#endif /* SOC_BLE_SUPPORTED */
+#endif // CONFIG_BLUEDROID_ENABLED
 #endif /* COMPONENTS_CPP_UTILS_BLESERVICE_H_ */

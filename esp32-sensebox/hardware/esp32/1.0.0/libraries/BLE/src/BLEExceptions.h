@@ -7,9 +7,6 @@
 
 #ifndef COMPONENTS_CPP_UTILS_BLEEXCEPTIONS_H_
 #define COMPONENTS_CPP_UTILS_BLEEXCEPTIONS_H_
-#include "soc/soc_caps.h"
-#if SOC_BLE_SUPPORTED
-
 #include "sdkconfig.h"
 
 #if CONFIG_CXX_EXCEPTIONS != 1
@@ -31,5 +28,4 @@ class BLEUuidNotFoundException : public std::exception {
 	}
 };
 
-#endif /* SOC_BLE_SUPPORTED */
 #endif /* COMPONENTS_CPP_UTILS_BLEEXCEPTIONS_H_ */

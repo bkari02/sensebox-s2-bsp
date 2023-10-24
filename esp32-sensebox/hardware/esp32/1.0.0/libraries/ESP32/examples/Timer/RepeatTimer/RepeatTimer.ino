@@ -21,7 +21,7 @@ volatile uint32_t lastIsrAt = 0;
 void ARDUINO_ISR_ATTR onTimer(){
   // Increment the counter and set the time of ISR
   portENTER_CRITICAL_ISR(&timerMux);
-  isrCounter = isrCounter + 1;
+  isrCounter++;
   lastIsrAt = millis();
   portEXIT_CRITICAL_ISR(&timerMux);
   // Give a semaphore that we can check in the loop
@@ -38,15 +38,20 @@ void setup() {
   // Create semaphore to inform us when the timer has fired
   timerSemaphore = xSemaphoreCreateBinary();
 
-  // Set timer frequency to 1Mhz
-  timer = timerBegin(1000000);
+  // Use 1st timer of 4 (counted from zero).
+  // Set 80 divider for prescaler (see ESP32 Technical Reference Manual for more
+  // info).
+  timer = timerBegin(0, 80, true);
 
   // Attach onTimer function to our timer.
-  timerAttachInterrupt(timer, &onTimer);
+  timerAttachInterrupt(timer, &onTimer, true);
 
   // Set alarm to call onTimer function every second (value in microseconds).
-  // Repeat the alarm (third parameter) with unlimited count = 0 (fourth parameter).
-  timerAlarm(timer, 1000000, true, 0);
+  // Repeat the alarm (third parameter)
+  timerAlarmWrite(timer, 1000000, true);
+
+  // Start an alarm
+  timerAlarmEnable(timer);
 }
 
 void loop() {

@@ -19,16 +19,20 @@
 #include "esp_heap_caps.h"
 
 #include "esp_system.h"
-#include "esp_psram.h"
-#include "esp_private/esp_psram_extram.h"
+#ifdef ESP_IDF_VERSION_MAJOR // IDF 4+
 #if CONFIG_IDF_TARGET_ESP32 // ESP32/PICO-D4
-#include "esp32/rom/cache.h"
+#include "esp32/spiram.h"
 #elif CONFIG_IDF_TARGET_ESP32S2
+#include "esp32s2/spiram.h"
 #include "esp32s2/rom/cache.h"
 #elif CONFIG_IDF_TARGET_ESP32S3
+#include "esp32s3/spiram.h"
 #include "esp32s3/rom/cache.h"
 #else 
 #error Target CONFIG_IDF_TARGET is not supported
+#endif
+#else // ESP32 Before IDF 4.0
+#include "esp_spiram.h"
 #endif
 
 static volatile bool spiramDetected = false;
@@ -37,7 +41,7 @@ static volatile bool spiramFailed = false;
 //allows user to bypass SPI RAM test routine
 __attribute__((weak)) bool testSPIRAM(void) 
 { 
-     return esp_psram_extram_test(); 
+     return esp_spiram_test(); 
 }
 
 
@@ -50,7 +54,7 @@ bool psramInit(){
         return false;
     }
 #if CONFIG_IDF_TARGET_ESP32
-    uint32_t chip_ver = REG_GET_FIELD(EFUSE_BLK0_RDATA3_REG, EFUSE_RD_CHIP_PACKAGE);
+    uint32_t chip_ver = REG_GET_FIELD(EFUSE_BLK0_RDATA3_REG, EFUSE_RD_CHIP_VER_PKG);
     uint32_t pkg_ver = chip_ver & 0x7;
     if (pkg_ver == EFUSE_RD_CHIP_VER_PKG_ESP32D2WDQ5 || pkg_ver == EFUSE_RD_CHIP_VER_PKG_ESP32PICOD2) {
         spiramFailed = true;
@@ -62,7 +66,7 @@ bool psramInit(){
     esp_config_data_cache_mode();
     Cache_Enable_DCache(0);
 #endif
-    if (esp_psram_init() != ESP_OK) {
+    if (esp_spiram_init() != ESP_OK) {
         spiramFailed = true;
         log_w("PSRAM init failed!");
 #if CONFIG_IDF_TARGET_ESP32
@@ -73,14 +77,14 @@ bool psramInit(){
 #endif
         return false;
     }
-    
+    esp_spiram_init_cache();
     //testSPIRAM() allows user to bypass SPI RAM test routine
     if (!testSPIRAM()) {
         spiramFailed = true;
         log_e("PSRAM test failed!");
         return false;
     }
-    if (esp_psram_extram_add_to_heap_allocator() != ESP_OK) {
+    if (esp_spiram_add_to_heapalloc() != ESP_OK) {
         spiramFailed = true;
         log_e("PSRAM could not be added to the heap!");
         return false;

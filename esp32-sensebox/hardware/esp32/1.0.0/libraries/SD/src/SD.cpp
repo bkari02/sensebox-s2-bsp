@@ -95,9 +95,8 @@ uint64_t SDFS::totalBytes()
 {
 	FATFS* fsinfo;
 	DWORD fre_clust;
-	char drv[3] = {(char)(48+_pdrv), ':', 0};
-	if(f_getfree(drv,&fre_clust,&fsinfo)!= 0) return 0;
-	uint64_t size = ((uint64_t)(fsinfo->csize))*(fsinfo->n_fatent - 2)
+	if(f_getfree("0:",&fre_clust,&fsinfo)!= 0) return 0;
+    uint64_t size = ((uint64_t)(fsinfo->csize))*(fsinfo->n_fatent - 2)
 #if _MAX_SS != 512
         *(fsinfo->ssize);
 #else
@@ -110,8 +109,7 @@ uint64_t SDFS::usedBytes()
 {
 	FATFS* fsinfo;
 	DWORD fre_clust;
-	char drv[3] = {(char)(48+_pdrv), ':', 0};
-	if(f_getfree(drv,&fre_clust,&fsinfo)!= 0) return 0;
+	if(f_getfree("0:",&fre_clust,&fsinfo)!= 0) return 0;
 	uint64_t size = ((uint64_t)(fsinfo->csize))*((fsinfo->n_fatent - 2) - (fsinfo->free_clst))
 #if _MAX_SS != 512
         *(fsinfo->ssize);

@@ -36,12 +36,10 @@ extern "C" {
 #include <esp_err.h>
 #include <esp_wifi.h>
 #include <esp_event.h>
-#include <esp_mac.h>
 #include "lwip/ip_addr.h"
 #include "lwip/opt.h"
 #include "lwip/err.h"
 #include "lwip/dns.h"
-#include "dhcpserver/dhcpserver.h"
 #include "dhcpserver/dhcpserver_options.h"
 
 } //extern "C"
@@ -296,7 +294,7 @@ static void set_esp_netif_hostname(const char * name){
 	}
 }
 
-static QueueHandle_t _arduino_event_queue;
+static xQueueHandle _arduino_event_queue;
 static TaskHandle_t _arduino_event_task_handle = NULL;
 static EventGroupHandle_t _arduino_event_group = NULL;
 
@@ -444,13 +442,10 @@ static void _arduino_event_cb(void* arg, esp_event_base_t event_base, int32_t ev
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_ETH_GOT_IP) {
         #if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_VERBOSE
             ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
-            log_v("Ethernet got %sip:" IPSTR, event->ip_changed?"new ":"", IP2STR(&event->ip_info.ip));
+            log_v("Ethernet got %sip:" IPSTR, event->ip_changed?"new":"", IP2STR(&event->ip_info.ip));
     	#endif
         arduino_event.event_id = ARDUINO_EVENT_ETH_GOT_IP;
     	memcpy(&arduino_event.event_info.got_ip, event_data, sizeof(ip_event_got_ip_t));
-    } else if (event_base == ETH_EVENT && event_id == IP_EVENT_ETH_LOST_IP) {
-        log_v("Ethernet Lost IP");
-        arduino_event.event_id = ARDUINO_EVENT_ETH_LOST_IP;
 
 	/*
 	 * IPv6
@@ -837,7 +832,6 @@ const char * WiFiGenericClass::disconnectReasonName(wifi_err_reason_t reason) {
         case WIFI_REASON_CONNECTION_FAIL: return "CONNECTION_FAIL";
         case WIFI_REASON_AP_TSF_RESET: return "AP_TSF_RESET";
         case WIFI_REASON_ROAMING: return "ROAMING";
-        case WIFI_REASON_ASSOC_COMEBACK_TIME_TOO_LONG: return "ASSOC_COMEBACK_TIME_TOO_LONG";
         default: return "";
     }
 }
@@ -873,7 +867,6 @@ const char * WiFiGenericClass::eventName(arduino_event_id_t id) {
         case ARDUINO_EVENT_ETH_CONNECTED: return "ETH_CONNECTED";
         case ARDUINO_EVENT_ETH_DISCONNECTED: return "ETH_DISCONNECTED";
         case ARDUINO_EVENT_ETH_GOT_IP: return "ETH_GOT_IP";
-        case ARDUINO_EVENT_ETH_LOST_IP: return "ETH_LOST_IP";
         case ARDUINO_EVENT_ETH_GOT_IP6: return "ETH_GOT_IP6";
         case ARDUINO_EVENT_WPS_ER_SUCCESS: return "WPS_ER_SUCCESS";
         case ARDUINO_EVENT_WPS_ER_FAILED: return "WPS_ER_FAILED";
@@ -1141,8 +1134,6 @@ esp_err_t WiFiGenericClass::_eventCallback(arduino_event_t *event)
             gw[0], gw[1], gw[2], gw[3]);
 #endif
         setStatusBits(ETH_CONNECTED_BIT | ETH_HAS_IP_BIT);
-    } else if(event->event_id == ARDUINO_EVENT_ETH_LOST_IP) {
-        clearStatusBits(ETH_HAS_IP_BIT);
 
     } else if(event->event_id == ARDUINO_EVENT_WIFI_STA_GOT_IP6) {
     	setStatusBits(STA_CONNECTED_BIT | STA_HAS_IP6_BIT);

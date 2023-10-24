@@ -55,8 +55,7 @@
 #define HTTPC_ERROR_READ_TIMEOUT        (-11)
 
 /// size for the stream handling
-#define HTTP_TCP_RX_BUFFER_SIZE (4096)
-#define HTTP_TCP_TX_BUFFER_SIZE (1460)
+#define HTTP_TCP_BUFFER_SIZE (1460)
 
 /// HTTP codes see RFC7231
 typedef enum {

@@ -11,10 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include "USB.h"
 
-#if SOC_USB_OTG_SUPPORTED
 #if CONFIG_TINYUSB_ENABLED
 
 #include "pins_arduino.h"
@@ -22,8 +20,6 @@
 #include "esp32-hal-tinyusb.h"
 #include "common/tusb_common.h"
 #include "StreamString.h"
-#include "rom/ets_sys.h"
-#include "esp_mac.h"
 
 #ifndef USB_VID
 #define USB_VID USB_ESPRESSIF_VID
@@ -51,8 +47,14 @@
 #define USB_WEBUSB_URL "https://espressif.github.io/arduino-esp32/webusb.html"
 #endif
 
+#if CFG_TUD_DFU
+__attribute__((weak, unused)) uint16_t load_dfu_ota_descriptor(uint8_t * dst, uint8_t * itf) {
+    return 0;
+}
+#endif /* CFG_TUD_DFU */
+
 #if CFG_TUD_DFU_RUNTIME
-static uint16_t load_dfu_descriptor(uint8_t * dst, uint8_t * itf)
+__attribute__((unused)) static uint16_t load_dfu_descriptor(uint8_t * dst, uint8_t * itf)
 {
 #define DFU_ATTRS (DFU_ATTR_CAN_DOWNLOAD | DFU_ATTR_CAN_UPLOAD | DFU_ATTR_MANIFESTATION_TOLERANT)
 
@@ -189,7 +191,7 @@ bool ESPUSB::begin(){
                 .webusb_enabled = webusb_enabled,
                 .webusb_url = webusb_url.c_str()
         };
-        _started = tinyusb_init(&tinyusb_device_config) == ESP_OK; 
+        _started = tinyusb_init(&tinyusb_device_config) == ESP_OK;
     }
     return _started;
 }
@@ -207,7 +209,9 @@ ESPUSB::operator bool() const
 }
 
 bool ESPUSB::enableDFU(){
-#if CFG_TUD_DFU_RUNTIME
+#if CFG_TUD_DFU
+    return tinyusb_enable_interface(USB_INTERFACE_DFU, TUD_DFU_DESC_LEN(1), load_dfu_ota_descriptor) == ESP_OK;
+#elif CFG_TUD_DFU_RUNTIME
     return tinyusb_enable_interface(USB_INTERFACE_DFU, TUD_DFU_RT_DESC_LEN, load_dfu_descriptor) == ESP_OK;
 #endif /* CFG_TUD_DFU_RUNTIME */
     return false;
@@ -359,4 +363,3 @@ const char * ESPUSB::webUSBURL(void){
 ESPUSB USB;
 
 #endif /* CONFIG_TINYUSB_ENABLED */
-#endif /* SOC_USB_OTG_SUPPORTED */

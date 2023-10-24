@@ -144,20 +144,7 @@ int I2SClass::_installDriver(){
     .intr_alloc_flags = ESP_INTR_FLAG_LEVEL2,
     .dma_buf_count = _I2S_DMA_BUFFER_COUNT,
     .dma_buf_len = _i2s_dma_buffer_size,
-    .use_apll = false,
-    #warning The following values are new and need to be checked
-    .tx_desc_auto_clear = true,
-    .fixed_mclk = 0,
-    .mclk_multiple = esp_i2s::I2S_MCLK_MULTIPLE_128,
-    .bits_per_chan = esp_i2s::I2S_BITS_PER_CHAN_DEFAULT
-#if SOC_I2S_SUPPORTS_TDM
-    ,.chan_mask = esp_i2s::I2S_CHANNEL_STEREO,
-    .total_chan = 2,
-    .left_align = false,
-    .big_edin = false,
-    .bit_order_msb = false,
-    .skip_msk = false
-#endif // SOC_I2S_SUPPORTS_TDM
+    .use_apll = false
   };
 
   if(_driveClock == false){
@@ -330,25 +317,24 @@ int I2SClass::begin(int mode, int sampleRate, int bitsPerSample, bool driveClock
 int I2SClass::_applyPinSetting(){
   if(_driverInstalled){
     esp_i2s::i2s_pin_config_t pin_config = {
-      .mck_io_num = I2S_PIN_NO_CHANGE,
-      .bck_io_num = _sckPin,
-      .ws_io_num = _fsPin,
+      .bck_io_num = digitalPinToGPIONumber(_sckPin),
+      .ws_io_num = digitalPinToGPIONumber(_fsPin),
       .data_out_num = I2S_PIN_NO_CHANGE,
       .data_in_num = I2S_PIN_NO_CHANGE
     };
     if (_state == I2S_STATE_DUPLEX){ // duplex
-      pin_config.data_out_num = _outSdPin;
-      pin_config.data_in_num = _inSdPin;
+      pin_config.data_out_num = digitalPinToGPIONumber(_outSdPin);
+      pin_config.data_in_num = digitalPinToGPIONumber(_inSdPin);
     }else{ // simplex
       if(_state == I2S_STATE_RECEIVER){
         pin_config.data_out_num = I2S_PIN_NO_CHANGE;
-        pin_config.data_in_num = _sdPin;
+        pin_config.data_in_num = digitalPinToGPIONumber(_sdPin);
       }else if(_state == I2S_STATE_TRANSMITTER){
-        pin_config.data_out_num = _sdPin;
+        pin_config.data_out_num = digitalPinToGPIONumber(_sdPin);
         pin_config.data_in_num = I2S_PIN_NO_CHANGE;
       }else{
         pin_config.data_out_num = I2S_PIN_NO_CHANGE;
-        pin_config.data_in_num = _sdPin;
+        pin_config.data_in_num = digitalPinToGPIONumber(_sdPin);
       }
     }
     if(ESP_OK != esp_i2s::i2s_set_pin((esp_i2s::i2s_port_t) _deviceIndex, &pin_config)){

@@ -139,7 +139,6 @@ esp_err_t RMakerClass::enableOTA(ota_type_t type, const char *cert)
         .ota_cb = NULL,
         .ota_diag = NULL,
         .server_cert = cert,
-        .priv = NULL
     };
     err = esp_rmaker_ota_enable(&ota_config, type);
     if(err != ESP_OK) {
