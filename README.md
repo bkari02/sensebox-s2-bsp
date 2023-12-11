@@ -1,6 +1,7 @@
 # sensebox-s2-bsp
 Experimental Arduino Board Support Package for senseBox MCU S2
 
+bksabclk
 Pins were mapped to senseBox MCU S2 Pins. Examples have not been tested so far.
 
 ## Versions
